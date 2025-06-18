@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ilyass Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #ffe0f0;
+      font-family: sans-serif;
+    }
+#bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 80px;
+  color: rgba(0, 0, 0, 0.05); /* رمادي باهت */
+  z-index: 0; /* يخليها فالخلفية */
+  pointer-events: none; /* باش متأثرش على اللعب */
+  white-space: nowrap;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+    #game {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+    }
+
+    #ilyass {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #ilyass img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #222;
+    }
+
+    .girl {
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      top: 0;
+    }
+
+    .girl img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    #score {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+	<div id="bg-text">Ilyass lkhallat</div>
+	<div id="game">
+    <div id="ilyass">
+      <img src="https://live.staticflickr.com/65535/54598633904_4300f88d8a_b.jpg" alt="Ilyass" />
+    </div>
+    <div id="score">Score: 0</div>
+  </div>
+
+  <script>
+    const ilyass = document.getElementById("ilyass");
+    const scoreText = document.getElementById("score");
+    const game = document.getElementById("game");
+    let score = 0;
+    let moveSpeed = 20;
+
+    // Liste d'images pour les filles
+    const girlImages = [
+      "https://live.staticflickr.com/65535/54597572622_aa6b89e88d_b.jpg",
+      "https://live.staticflickr.com/65535/54598660718_dfb105baae_b.jpg",
+      "https://live.staticflickr.com/65535/54598661348_b49717aa0a_b.jpg",
+      "https://live.staticflickr.com/65535/54597574922_4c27dd5381_b.jpg"
+    ];
+
+    // Déplacement Ilyass
+    document.addEventListener("keydown", (e) => {
+      const left = parseInt(window.getComputedStyle(ilyass).left);
+      if (e.key === "ArrowLeft" && left > 0) {
+        ilyass.style.left = left - moveSpeed + "px";
+      } else if (e.key === "ArrowRight" && left < window.innerWidth - 60) {
+        ilyass.style.left = left + moveSpeed + "px";
+      }
+    });
+
+    function createGirl() {
+      const girl = document.createElement("div");
+      girl.classList.add("girl");
+      const img = document.createElement("img");
+      const randomImage = girlImages[Math.floor(Math.random() * girlImages.length)];
+      img.src = randomImage;
+      girl.appendChild(img);
+      girl.style.left = Math.floor(Math.random() * (window.innerWidth - 50)) + "px";
+      game.appendChild(girl);
+
+      let fallInterval = setInterval(() => {
+        let top = parseInt(girl.style.top || 0);
+        if (top > window.innerHeight - 100) {
+          let ilyassLeft = parseInt(window.getComputedStyle(ilyass).left);
+          let girlLeft = parseInt(girl.style.left);
+          if (Math.abs(ilyassLeft - girlLeft) < 50) {
+  score++;
+  scoreText.textContent = "Score: " + score;
+  game.removeChild(girl); // حذف البنت من اللعبة
+  clearInterval(fallInterval);
+} else {
+  clearInterval(fallInterval);
+  game.removeChild(girl);
+  alert("Ilyass zgel wa7da 😅\nScore: " + score);
+  location.reload();
+}
+
+
+          game.removeChild(girl);
+        } else {
+          top += 3;
+          girl.style.top = top + "px";
+        }
+      }, 30);
+    }
+
+    setInterval(createGirl, 4000);
+  </script>
+</body>
+</html>
